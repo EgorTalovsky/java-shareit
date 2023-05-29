@@ -1,12 +1,14 @@
-package ru.practicum.shareit.item;
+package ru.practicum.shareit.item.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.IncorrectFieldByItemException;
 import ru.practicum.shareit.exception.UserNotFoundException;
+import ru.practicum.shareit.item.ItemMapper;
+import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.UserController;
 
 import java.util.List;
@@ -14,11 +16,10 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
-    private final ItemRepository itemRepository;
+    private final ItemRepositoryImpl itemRepository;
     private final UserController userController;
 
-    public Item addItem(long userId, ItemDto itemDto) {
-        Item item = ItemMapper.toItem(itemDto);
+    public Item addItem(long userId, Item item) {
         User sharer = userController.getUserById(userId);
         if (sharer != null) {
             item.setOwner(sharer);
@@ -34,8 +35,8 @@ public class ItemServiceImpl implements ItemService {
         return itemRepository.addItem(item);
     }
 
-    public ItemDto updateItem(ItemDto itemDto, long id, long userId) {
-        return ItemMapper.toItemDto(itemRepository.updateItem(itemDto, id, userId));
+    public ItemDto updateItem(Item item, long id, long userId) {
+        return ItemMapper.toItemDto(itemRepository.updateItem(item, id, userId));
     }
 
     public ItemDto getItemById(long id) {

@@ -1,10 +1,11 @@
 package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.impl.UserServiceImpl;
+import ru.practicum.shareit.user.model.User;
 
-import java.lang.reflect.Field;
 import java.util.*;
 
 /**
@@ -14,10 +15,11 @@ import java.util.*;
 @RequestMapping(path = "/users")
 @RequiredArgsConstructor
 public class UserController {
-    private final UserService userService;
+    private final UserServiceImpl userService;
 
     @PostMapping
-    public User createUser(@RequestBody User user) {
+    public User createUser(@RequestBody UserDto userDto) {
+        User user = UserMapper.toUser(userDto);
         return userService.createUser(user);
     }
 
@@ -33,8 +35,9 @@ public class UserController {
 
     @PatchMapping("/{id}")
     public User updateUser(@RequestBody UserDto userDto,
-                           @PathVariable long id) throws IllegalAccessException {
-        return userService.updateUser(userDto, id);
+                           @PathVariable long id) {
+        User user = UserMapper.toUser(userDto);
+        return userService.updateUser(user, id);
     }
 
     @DeleteMapping("/{id}")

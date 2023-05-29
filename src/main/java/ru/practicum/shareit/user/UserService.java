@@ -1,32 +1,19 @@
 package ru.practicum.shareit.user;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.model.User;
 
-import java.util.*;
+import java.util.Collection;
 
-@Service
-@RequiredArgsConstructor
-public class UserService {
-    private final UserRepository userRepository;
+public interface UserService {
 
-    public User createUser(User user) {
-        return userRepository.createUser(user);
-    }
+    User createUser(User user);
 
-    public Collection<User> getAllUsers() {
-        return userRepository.getAllUsers();
-    }
+    Collection<User> getAllUsers();
 
-    public User getUserById(long userId) {
-        return userRepository.getUserById(userId);
-    }
+    User getUserById(long userId);
 
-    public User updateUser(UserDto userDto, long userId) throws IllegalAccessException {
-        return userRepository.updateUser(userDto, userId);
-    }
+    User updateUser(User user, long userId);
 
-    public void deleteUserById(long userId) {
-        userRepository.deleteUserById(userId);
-    }
+    void deleteUserById(long userId);
 }
