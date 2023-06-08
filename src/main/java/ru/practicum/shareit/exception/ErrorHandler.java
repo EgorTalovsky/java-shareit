@@ -36,10 +36,32 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleIncorrectField(final IncorrectFieldByItemException e) {
+    public Map<String, String> handleIncorrectFieldOfItem(final IncorrectFieldByItemException e) {
         return Map.of("Некорректное поле", e.getMessage());
     }
 
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleUnavailableItem(final ItemUnavailableException e) {
+        return Map.of("Данная вещь недоступна для аренды", e.getMessage());
+    }
 
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleIncorrectFieldOfBooking(final BookingCheckException e) {
+        return Map.of("Запрос аренды некорректен", e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map<String, String> handleBookingNotFound(final BookingNotFoundException e) {
+        return Map.of("Запрос аренды некорректен", e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public Map<String, String> handleBookingStateNotFound(final BookingStateNotFoundException e) {
+        return Map.of("error",  "Unknown state: " + e.getMessage());
+    }
 
 }

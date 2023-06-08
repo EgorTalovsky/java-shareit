@@ -14,8 +14,8 @@ import java.util.List;
 import java.util.Map;
 
 
-@Repository
-public class ItemRepositoryImpl implements ItemRepository {
+
+public class ItemRepositoryImpl {
     private final Map<Long, Item> items = new HashMap<>();
     private long nextId = 1;
     private final UserController userController;

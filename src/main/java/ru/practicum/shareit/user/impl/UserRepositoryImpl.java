@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-@Repository
 public class UserRepositoryImpl {
     private Map<Long, User> users = new HashMap<>();
     private Map<Long, String> userEmails = new HashMap<>();
