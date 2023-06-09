@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
 import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingWithoutTimes;
 import ru.practicum.shareit.item.model.Item;
 
 @RequiredArgsConstructor
@@ -16,15 +17,4 @@ public class BookingMapper {
                 bookingDto.getBooker(),
                 bookingDto.getStatus());
     }
-
-    public static BookingDto toBookingDto(Booking booking) {
-        return new BookingDto(
-                booking.getId(),
-                booking.getStart(),
-                booking.getEnd(),
-                booking.getItem().getId(),
-                booking.getBooker(),
-                booking.getStatus());
-    }
-
 }

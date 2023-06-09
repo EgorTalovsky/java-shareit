@@ -1,14 +1,13 @@
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.*;
-import ru.practicum.shareit.item.ItemController;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserController;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -78,10 +77,16 @@ public class BookingServiceImpl {
             return sortedList(bookingRepository.findAllBookingsByBookerId(userId));
         }
         if (state.equals("CURRENT")) {
-            return sortedList(bookingRepository.findAllCurrentBookings(userId, LocalDateTime.now()));
+            return bookingRepository.findAllCurrentBookings(userId, LocalDateTime.now())
+                    .stream()
+                    .sorted((Comparator.comparingLong(Booking::getId)))
+                    .collect(Collectors.toList());
         }
         if (state.equals("REJECTED")) {
             return sortedList(bookingRepository.findAllRejectedBookingsForBooker(userId));
+        }
+        if (state.equals("PAST")) {
+            return sortedList(bookingRepository.findAllPastBookingsForBooker(userId, LocalDateTime.now()));
         }
         throw new BookingStateNotFoundException(state);
 
@@ -103,6 +108,12 @@ public class BookingServiceImpl {
         }
         if (state.equals("WAITING")) {
             return sortedList(bookingRepository.findAllWaitingBookingsForOwner(ownerId));
+        }
+        if (state.equals("CURRENT")) {
+            return bookingRepository.findAllCurrentBookingsForOwner(ownerId, LocalDateTime.now())
+                    .stream()
+                    .sorted((Comparator.comparingLong(Booking::getId)))
+                    .collect(Collectors.toList());
         }
         throw new BookingStateNotFoundException(state);
     }

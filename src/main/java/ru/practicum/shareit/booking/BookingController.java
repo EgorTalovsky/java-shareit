@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.item.ItemController;
+import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.item.model.Item;
 
@@ -24,7 +25,7 @@ public class BookingController {
     @PostMapping
     public Booking addBooking(@RequestHeader("X-Sharer-User-Id") long bookerId,
                               @RequestBody @Valid BookingDto bookingDto) {
-        Item item = itemService.getItemById(bookingDto.getItemId());
+        Item item = ItemMapper.toItem(itemService.getItemById(bookingDto.getItemId()));
         Booking booking = BookingMapper.toBooking(bookingDto, item);
         return bookingService.addBooking(bookerId, booking, item);
     }

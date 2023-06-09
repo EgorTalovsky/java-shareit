@@ -40,4 +40,10 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query("SELECT b FROM Booking b LEFT JOIN Item i ON b.item.id = i.id WHERE i.owner.id = :ownerId AND b.status = '0'")
     List<Booking> findAllWaitingBookingsForOwner(long ownerId);
+
+    @Query("SELECT b FROM Booking b LEFT JOIN Item i ON b.item.id = i.id WHERE i.owner.id = :ownerId AND b.end > :now AND b.start < :now")
+    List<Booking> findAllCurrentBookingsForOwner(long ownerId, LocalDateTime now);
+
+    @Query("SELECT b FROM Booking b WHERE b.booker.id = :bookerId AND b.end < :now")
+    List<Booking> findAllPastBookingsForBooker(long bookerId, LocalDateTime now);
 }

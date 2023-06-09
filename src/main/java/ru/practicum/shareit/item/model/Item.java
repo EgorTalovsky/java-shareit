@@ -8,6 +8,8 @@ import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * TODO Sprint add-controllers.
@@ -32,5 +34,10 @@ public class Item {
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private User owner;
+
+    //@ElementCollection
+    //@CollectionTable(name="comments", joinColumns=@JoinColumn(name="item_id"))
+    //@Transient
+    //private List<Comment> comments = new ArrayList<>();
 
 }

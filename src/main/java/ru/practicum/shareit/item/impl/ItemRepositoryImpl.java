@@ -1,4 +1,4 @@
-package ru.practicum.shareit.item.impl;
+/*package ru.practicum.shareit.item.impl;
 
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exception.UserNotFoundException;
@@ -81,4 +81,4 @@ public class ItemRepositoryImpl {
         }
         return foundItems;
     }
-}
+}*/
