@@ -166,8 +166,8 @@ public class ItemServiceImpl implements ItemService {
                 comment.getText(),
                 comment.getItem(),
                 comment.getAuthor().getName(),
-                comment.getCreated()) ;
-}
+                comment.getCreated());
+    }
 
     private void checkItemOwner(long userId, Item item) {
         User owner = userController.getUserById(userId);
@@ -179,7 +179,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private Item checkAndSetFieldsForUpdate(Item item, long itemId) {
-        Item updatedItem = ItemMapper.toItem(getItemById(itemId)) ;
+        Item updatedItem = ItemMapper.toItem(getItemById(itemId));
         if (item.getName() != null) {
             updatedItem.setName(item.getName());
         }

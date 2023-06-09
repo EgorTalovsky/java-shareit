@@ -1,12 +1,9 @@
 package ru.practicum.shareit.user.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exception.EmailAlreadyExistException;
 import ru.practicum.shareit.exception.IncorrectEmailException;
-import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
-
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -14,8 +11,8 @@ import java.util.Map;
 
 @Slf4j
 public class UserRepositoryImpl {
-    private Map<Long, User> users = new HashMap<>();
-    private Map<Long, String> userEmails = new HashMap<>();
+    private final Map<Long, User> users = new HashMap<>();
+    private final Map<Long, String> userEmails = new HashMap<>();
     private long nextId = 1;
 
     public User createUser(User user) {

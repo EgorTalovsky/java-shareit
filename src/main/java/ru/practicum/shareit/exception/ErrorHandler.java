@@ -61,7 +61,7 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleBookingStateNotFound(final BookingStateNotFoundException e) {
-        return Map.of("error",  "Unknown state: " + e.getMessage());
+        return Map.of("error", "Unknown state: " + e.getMessage());
     }
 
 }
