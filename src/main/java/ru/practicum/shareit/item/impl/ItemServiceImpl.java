@@ -2,21 +2,21 @@ package ru.practicum.shareit.item.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
-import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.booking.dto.BookingSimplifiedDto;
+import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.exception.BookingStateNotFoundException;
 import ru.practicum.shareit.exception.ItemNotFoundException;
 import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.item.CommentRepository;
-import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.item.dto.CommentDto;
-import ru.practicum.shareit.item.dto.CommentMapper;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemWithBookingsDto;
+import ru.practicum.shareit.item.dto.ItemWithBookingsAndCommentsDto;
+import ru.practicum.shareit.item.dto.mapper.CommentMapper;
+import ru.practicum.shareit.item.dto.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserController;
@@ -64,9 +64,9 @@ public class ItemServiceImpl implements ItemService {
                 comments);
     }
 
-    public List<ItemWithBookingsDto> getItemsByOwner(long ownerId) {
+    public List<ItemWithBookingsAndCommentsDto> getItemsByOwner(long ownerId) {
         LocalDateTime now = LocalDateTime.now();
-        List<ItemWithBookingsDto> itemWithBookingsDtoList = new ArrayList<>();
+        List<ItemWithBookingsAndCommentsDto> itemWithBookingsDtoList = new ArrayList<>();
         List<Item> items = itemRepository.findItemByOwnerId(ownerId);
         if (bookingRepository.findAllByItemOwnerId(ownerId).isEmpty()) {
             for (Item item : items) {
@@ -74,7 +74,7 @@ public class ItemServiceImpl implements ItemService {
                         .stream()
                         .map(CommentMapper::toCommentDto)
                         .collect(Collectors.toList());
-                ItemWithBookingsDto itemDto = new ItemWithBookingsDto(
+                ItemWithBookingsAndCommentsDto itemDto = new ItemWithBookingsAndCommentsDto(
                         item.getId(),
                         item.getName(),
                         item.getDescription(),
@@ -128,7 +128,7 @@ public class ItemServiceImpl implements ItemService {
                         .stream()
                         .map(CommentMapper::toCommentDto)
                         .collect(Collectors.toList());
-                ItemWithBookingsDto itemDto = new ItemWithBookingsDto(
+                ItemWithBookingsAndCommentsDto itemDto = new ItemWithBookingsAndCommentsDto(
                         item.getId(),
                         item.getName(),
                         item.getDescription(),
@@ -141,7 +141,7 @@ public class ItemServiceImpl implements ItemService {
         }
         return itemWithBookingsDtoList
                 .stream()
-                .sorted(Comparator.comparingLong(ItemWithBookingsDto::getId))
+                .sorted(Comparator.comparingLong(ItemWithBookingsAndCommentsDto::getId))
                 .collect(Collectors.toList());
     }
 

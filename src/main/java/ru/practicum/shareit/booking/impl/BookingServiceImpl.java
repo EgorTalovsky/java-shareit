@@ -1,7 +1,11 @@
-package ru.practicum.shareit.booking;
+package ru.practicum.shareit.booking.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.booking.BookingRepository;
+import ru.practicum.shareit.booking.BookingService;
+import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.exception.*;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserController;
@@ -13,7 +17,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class BookingServiceImpl {
+public class BookingServiceImpl implements BookingService {
     private final UserController userController;
     private final BookingRepository bookingRepository;
 
@@ -68,13 +72,13 @@ public class BookingServiceImpl {
     public List<Booking> getAllUserBookings(long userId, String state) {
         userController.getUserById(userId);
         if (state.equals("WAITING")) {
-            return sortedList(bookingRepository.findAllByStatusWaiting(userId));
+            return sortedListByDate(bookingRepository.findAllByStatusWaiting(userId));
         }
         if (state.equals("FUTURE")) {
-            return sortedList(bookingRepository.findAllBookingsOnFuture(userId, LocalDateTime.now()));
+            return sortedListByDate(bookingRepository.findAllBookingsOnFuture(userId, LocalDateTime.now()));
         }
         if (state.equals("ALL")) {
-            return sortedList(bookingRepository.findAllBookingsByBookerId(userId));
+            return sortedListByDate(bookingRepository.findAllBookingsByBookerId(userId));
         }
         if (state.equals("CURRENT")) {
             return bookingRepository.findAllCurrentBookings(userId, LocalDateTime.now())
@@ -83,10 +87,10 @@ public class BookingServiceImpl {
                     .collect(Collectors.toList());
         }
         if (state.equals("REJECTED")) {
-            return sortedList(bookingRepository.findAllRejectedBookingsForBooker(userId));
+            return sortedListByDate(bookingRepository.findAllRejectedBookingsForBooker(userId));
         }
         if (state.equals("PAST")) {
-            return sortedList(bookingRepository.findAllPastBookingsForBooker(userId, LocalDateTime.now()));
+            return sortedListByDate(bookingRepository.findAllPastBookingsForBooker(userId, LocalDateTime.now()));
         }
         throw new BookingStateNotFoundException(state);
 
@@ -95,19 +99,19 @@ public class BookingServiceImpl {
     public List<Booking> getAllBookingsForItemsOfOwner(long ownerId, String state) {
         userController.getUserById(ownerId);
         if (state.equals("ALL")) {
-            return sortedList(bookingRepository.findAllByItemOwnerId(ownerId));
+            return sortedListByDate(bookingRepository.findAllByItemOwnerId(ownerId));
         }
         if (state.equals("FUTURE")) {
-            return sortedList(bookingRepository.findAllOwnerBookingsOnFuture(ownerId, LocalDateTime.now()));
+            return sortedListByDate(bookingRepository.findAllOwnerBookingsOnFuture(ownerId, LocalDateTime.now()));
         }
         if (state.equals("PAST")) {
-            return sortedList(bookingRepository.findAllOwnersBookingsOnPast(ownerId, LocalDateTime.now()));
+            return sortedListByDate(bookingRepository.findAllOwnersBookingsOnPast(ownerId, LocalDateTime.now()));
         }
         if (state.equals("REJECTED")) {
-            return sortedList(bookingRepository.findAllOwnersRejectedBookings(ownerId));
+            return sortedListByDate(bookingRepository.findAllOwnersRejectedBookings(ownerId));
         }
         if (state.equals("WAITING")) {
-            return sortedList(bookingRepository.findAllWaitingBookingsForOwner(ownerId));
+            return sortedListByDate(bookingRepository.findAllWaitingBookingsForOwner(ownerId));
         }
         if (state.equals("CURRENT")) {
             return bookingRepository.findAllCurrentBookingsForOwner(ownerId, LocalDateTime.now())
@@ -118,7 +122,7 @@ public class BookingServiceImpl {
         throw new BookingStateNotFoundException(state);
     }
 
-    private List<Booking> sortedList(List<Booking> bookings) {
+    private List<Booking> sortedListByDate(List<Booking> bookings) {
         return bookings
                 .stream()
                 .sorted(((o1, o2) -> o2.getStart().compareTo(o1.getStart())))

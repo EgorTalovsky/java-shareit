@@ -4,7 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemWithBookingsDto;
+import ru.practicum.shareit.item.dto.ItemWithBookingsAndCommentsDto;
+import ru.practicum.shareit.item.dto.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.impl.UserServiceImpl;
@@ -39,8 +40,8 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemWithBookingsDto getItemById(@RequestHeader("X-Sharer-User-Id") long userId,
-                                           @PathVariable long itemId) {
+    public ItemWithBookingsAndCommentsDto getItemById(@RequestHeader("X-Sharer-User-Id") long userId,
+                                                      @PathVariable long itemId) {
         ItemDto itemDto = itemService.getItemById(itemId);
         long ownerId = itemDto.getOwner().getId();
         if (ownerId == userId) {
@@ -50,7 +51,7 @@ public class ItemController {
                     .collect(Collectors.toList())
                     .get(0);
         }
-        return new ItemWithBookingsDto(
+        return new ItemWithBookingsAndCommentsDto(
                 itemDto.getId(),
                 itemDto.getName(),
                 itemDto.getDescription(),
@@ -61,7 +62,7 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemWithBookingsDto> getAllItemsByOwner(@RequestHeader("X-Sharer-User-Id") long userId) {
+    public List<ItemWithBookingsAndCommentsDto> getAllItemsByOwner(@RequestHeader("X-Sharer-User-Id") long userId) {
         return itemService.getItemsByOwner(userId);
     }
 
