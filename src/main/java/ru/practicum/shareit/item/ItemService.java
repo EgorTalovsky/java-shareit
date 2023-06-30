@@ -21,4 +21,8 @@ public interface ItemService {
     List<Item> searchItem(String text);
 
     CommentDto addComment(Comment comment);
+
+    void checkItemOwner(long userId, Item item);
+
+    Item checkAndSetFieldsForUpdate(Item item, long itemId);
 }
