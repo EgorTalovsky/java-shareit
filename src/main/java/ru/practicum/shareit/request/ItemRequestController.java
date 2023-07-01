@@ -5,12 +5,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
-import ru.practicum.shareit.request.model.ItemRequest;
-import ru.practicum.shareit.user.UserService;
-import ru.practicum.shareit.user.model.User;
 
 import javax.validation.Valid;
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -20,24 +16,17 @@ import java.util.List;
 @RequestMapping(path = "/requests")
 @RequiredArgsConstructor
 public class ItemRequestController {
-    private final UserService userService;
+
     private final ItemRequestService itemRequestService;
 
     @PostMapping
-    public ItemRequest addRequest(@RequestBody @Valid ItemRequestDto itemRequestDto,
-                                  @RequestHeader("X-Sharer-User-Id") long requestorId) {
-        User requestor = userService.getUserById(requestorId);
-        ItemRequest itemRequest = new ItemRequest(
-                itemRequestDto.getId(),
-                itemRequestDto.getDescription(),
-                requestor,
-                LocalDateTime.now());
-        return itemRequestService.addRequest(itemRequest);
+    public ItemRequestDto addRequest(@RequestBody @Valid ItemRequestDto itemRequestDto,
+                                     @RequestHeader("X-Sharer-User-Id") long requestorId) {
+        return itemRequestService.addRequest(itemRequestDto, requestorId);
     }
 
     @GetMapping
     public List<ItemRequestDto> getAllRequestsByRequestorId(@RequestHeader("X-Sharer-User-Id") long requestorId) {
-        User requestor = userService.getUserById(requestorId);
         return itemRequestService.getAllRequestsByRequestorId(requestorId);
     }
 
@@ -52,7 +41,6 @@ public class ItemRequestController {
     @GetMapping("/{requestId}")
     public ItemRequestDto getItemRequestById(@RequestHeader("X-Sharer-User-Id") long userId,
                                              @PathVariable long requestId) {
-        User user = userService.getUserById(userId);
-        return itemRequestService.getItemRequestById(requestId);
+        return itemRequestService.getItemRequestById(requestId, userId);
     }
 }

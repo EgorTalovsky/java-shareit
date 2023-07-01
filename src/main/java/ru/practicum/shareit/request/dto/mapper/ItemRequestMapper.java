@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @Component
 public class ItemRequestMapper {
 
-    public static ItemRequestDto toItemRequestDto(ItemRequest itemRequest) {
+    public static ItemRequestDto toItemRequestDtoWithItems(ItemRequest itemRequest) {
         List<Item> items = itemRequest.getItems();
         List<ItemDto> itemsDto = items.stream()
                 .map(ItemMapper::toItemDtoWithRequest)
@@ -22,5 +22,13 @@ public class ItemRequestMapper {
                 itemRequest.getDescription(),
                 itemRequest.getCreated(),
                 itemsDto);
+    }
+
+    public static ItemRequestDto toItemRequestDtoWithoutItems(ItemRequest itemRequest) {
+        return ItemRequestDto.builder()
+                .id(itemRequest.getId())
+                .description(itemRequest.getDescription())
+                .created(itemRequest.getCreated())
+                .build();
     }
 }

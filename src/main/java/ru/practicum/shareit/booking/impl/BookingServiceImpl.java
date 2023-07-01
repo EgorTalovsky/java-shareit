@@ -24,7 +24,6 @@ public class BookingServiceImpl implements BookingService {
     private final UserController userController;
     private final BookingRepository bookingRepository;
 
-
     public Booking addBooking(long bookerId, Booking booking, Item item) {
         if (item.getOwner().getId() == bookerId) {
             throw new BookingNotFoundException("Вы не можете забронировать свою же вещь");

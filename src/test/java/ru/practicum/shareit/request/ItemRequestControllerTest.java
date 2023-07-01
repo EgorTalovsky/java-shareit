@@ -12,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
-import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.UserService;
 import ru.practicum.shareit.user.model.User;
 
@@ -52,7 +51,7 @@ class ItemRequestControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
-        verify(itemRequestService, times(1)).addRequest(any(ItemRequest.class));
+        verify(itemRequestService, times(1)).addRequest(requestDto, userId);
     }
 
     @SneakyThrows
