@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -8,7 +9,9 @@ import ru.practicum.shareit.item.dto.ItemWithBookingsAndCommentsDto;
 import ru.practicum.shareit.item.dto.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.impl.UserServiceImpl;
+import ru.practicum.shareit.request.impl.ItemRequestServiceImpl;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.user.UserService;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
@@ -22,14 +25,29 @@ import java.util.stream.Collectors;
 @RequestMapping("/items")
 @RequiredArgsConstructor
 public class ItemController {
+    @Autowired
     private final ItemService itemService;
-    private final UserServiceImpl userService;
+    @Autowired
+    private final UserService userService;
+    @Autowired
+    private final ItemRequestServiceImpl itemRequestService;
 
     @PostMapping
-    public Item addItem(@RequestHeader("X-Sharer-User-Id") long userId,
-                        @RequestBody @Valid ItemDto itemDto) {
-        Item item = ItemMapper.toItem(itemDto);
-        return itemService.addItem(userId, item);
+    public ItemDto addItem(@RequestHeader("X-Sharer-User-Id") long userId,
+                           @RequestBody @Valid ItemDto itemDto) {
+        Item item = new Item();
+        long requestId = itemDto.getRequestId();
+        if (requestId > 0) {
+            ItemRequest request = itemRequestService.getFullItemRequestById(requestId);
+            item = ItemMapper.toItem(itemDto);
+            request.getItems().add(item);
+            item.setRequest(request);
+            itemDto.setRequestId(requestId);
+            return ItemMapper.toItemDtoWithRequest(itemService.addItem(userId, item));
+        } else {
+            item = ItemMapper.toItem(itemDto);
+            return ItemMapper.toItemDto(itemService.addItem(userId, item));
+        }
     }
 
     @PatchMapping("/{itemId}")
@@ -75,15 +93,12 @@ public class ItemController {
     public CommentDto addComment(@RequestHeader("X-Sharer-User-Id") long userId,
                                  @RequestBody @Valid CommentDto commentDto,
                                  @PathVariable long itemId) {
-        commentDto.setCreated(LocalDateTime.now());
-        commentDto.setItem(ItemMapper.toItem(itemService.getItemById(itemId)));
-        commentDto.setAuthorName(userService.getUserById(userId).getName());
         Comment comment = new Comment(
                 commentDto.getId(),
                 commentDto.getText(),
-                commentDto.getItem(),
+                ItemMapper.toItem(itemService.getItemById(itemId)),
                 userService.getUserById(userId),
-                commentDto.getCreated());
+                LocalDateTime.now());
         return itemService.addComment(comment);
     }
 }

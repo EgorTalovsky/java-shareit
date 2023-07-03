@@ -1,6 +1,9 @@
 package ru.practicum.shareit.booking.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.BookingService;
@@ -20,7 +23,6 @@ import java.util.stream.Collectors;
 public class BookingServiceImpl implements BookingService {
     private final UserController userController;
     private final BookingRepository bookingRepository;
-
 
     public Booking addBooking(long bookerId, Booking booking, Item item) {
         if (item.getOwner().getId() == bookerId) {
@@ -62,70 +64,65 @@ public class BookingServiceImpl implements BookingService {
     public Booking getBookingById(long userId, long bookingId) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new BookingNotFoundException("Бронирование с таким id не нашлось"));
-        if (booking.getBooker().getId() == userId || booking.getItem().getOwner().getId() == userId) {
+        if (booking.getBooker().getId() == userId
+                || booking.getItem().getOwner().getId() == userId) {
             return booking;
-        } else {
-            throw new BookingNotFoundException("Вы не владелец вещи");
         }
+        throw new BookingNotFoundException("Вы не владелец вещи");
     }
 
-    public List<Booking> getAllUserBookings(long userId, String state) {
+    public List<Booking> getAllUserBookings(long userId, String state, Pageable pageable) {
         userController.getUserById(userId);
+        Pageable page = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("start").descending());
         if (state.equals("WAITING")) {
-            return sortedListByDate(bookingRepository.findAllByStatusWaiting(userId));
+            return bookingRepository.findAllByStatusWaiting(userId, page);
         }
         if (state.equals("FUTURE")) {
-            return sortedListByDate(bookingRepository.findAllBookingsOnFuture(userId, LocalDateTime.now()));
+            return bookingRepository.findAllBookingsOnFuture(userId, LocalDateTime.now(), page);
         }
         if (state.equals("ALL")) {
-            return sortedListByDate(bookingRepository.findAllBookingsByBookerId(userId));
+            return bookingRepository.findAllBookingsByBookerId(userId, page);
         }
         if (state.equals("CURRENT")) {
-            return bookingRepository.findAllCurrentBookings(userId, LocalDateTime.now())
+            return bookingRepository.findAllCurrentBookings(userId, LocalDateTime.now(), page)
                     .stream()
                     .sorted((Comparator.comparingLong(Booking::getId)))
                     .collect(Collectors.toList());
         }
         if (state.equals("REJECTED")) {
-            return sortedListByDate(bookingRepository.findAllRejectedBookingsForBooker(userId));
+            return bookingRepository.findAllRejectedBookingsForBooker(userId, page);
         }
         if (state.equals("PAST")) {
-            return sortedListByDate(bookingRepository.findAllPastBookingsForBooker(userId, LocalDateTime.now()));
+            return bookingRepository.findAllPastBookingsForBooker(userId, LocalDateTime.now(), page);
         }
         throw new BookingStateNotFoundException(state);
 
     }
 
-    public List<Booking> getAllBookingsForItemsOfOwner(long ownerId, String state) {
+    public List<Booking> getAllBookingsForItemsOfOwner(long ownerId, String state, Pageable pageable) {
         userController.getUserById(ownerId);
+        Pageable page = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("start").descending());
         if (state.equals("ALL")) {
-            return sortedListByDate(bookingRepository.findAllByItemOwnerId(ownerId));
+            return bookingRepository.findAllByItemOwnerId(ownerId, page);
         }
         if (state.equals("FUTURE")) {
-            return sortedListByDate(bookingRepository.findAllOwnerBookingsOnFuture(ownerId, LocalDateTime.now()));
+            return bookingRepository.findAllOwnerBookingsOnFuture(ownerId, LocalDateTime.now(), page);
         }
         if (state.equals("PAST")) {
-            return sortedListByDate(bookingRepository.findAllOwnersBookingsOnPast(ownerId, LocalDateTime.now()));
+            return bookingRepository.findAllOwnersBookingsOnPast(ownerId, LocalDateTime.now(), page);
         }
         if (state.equals("REJECTED")) {
-            return sortedListByDate(bookingRepository.findAllOwnersRejectedBookings(ownerId));
+            return bookingRepository.findAllOwnersRejectedBookings(ownerId, page);
         }
         if (state.equals("WAITING")) {
-            return sortedListByDate(bookingRepository.findAllWaitingBookingsForOwner(ownerId));
+            return bookingRepository.findAllWaitingBookingsForOwner(ownerId, page);
         }
         if (state.equals("CURRENT")) {
-            return bookingRepository.findAllCurrentBookingsForOwner(ownerId, LocalDateTime.now())
+            return bookingRepository.findAllCurrentBookingsForOwner(ownerId, LocalDateTime.now(), page)
                     .stream()
                     .sorted((Comparator.comparingLong(Booking::getId)))
                     .collect(Collectors.toList());
         }
         throw new BookingStateNotFoundException(state);
-    }
-
-    private List<Booking> sortedListByDate(List<Booking> bookings) {
-        return bookings
-                .stream()
-                .sorted(((o1, o2) -> o2.getStart().compareTo(o1.getStart())))
-                .collect(Collectors.toList());
     }
 }

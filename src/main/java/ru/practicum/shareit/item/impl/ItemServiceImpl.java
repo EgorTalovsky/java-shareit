@@ -1,6 +1,8 @@
 package ru.practicum.shareit.item.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.dto.BookingSimplifiedDto;
@@ -68,7 +70,8 @@ public class ItemServiceImpl implements ItemService {
         LocalDateTime now = LocalDateTime.now();
         List<ItemWithBookingsAndCommentsDto> itemWithBookingsDtoList = new ArrayList<>();
         List<Item> items = itemRepository.findItemByOwnerId(ownerId);
-        if (bookingRepository.findAllByItemOwnerId(ownerId).isEmpty()) {
+        Pageable page = PageRequest.of(0, 10);
+        if (bookingRepository.findAllByItemOwnerId(ownerId, page).isEmpty()) {
             for (Item item : items) {
                 List<CommentDto> comments = commentRepository.findAllByItemId(item.getId())
                         .stream()
@@ -87,7 +90,7 @@ public class ItemServiceImpl implements ItemService {
         } else {
             for (Item item : items) {
                 long itemId = item.getId();
-                List<Booking> allBookingsOfItem = bookingRepository.findAllBookingsByItemId(itemId);
+                List<Booking> allBookingsOfItem = bookingRepository.findAllBookingsByItemId(itemId, page);
                 List<Booking> pastBookingsOfItem = new ArrayList<>();
                 List<Booking> futureBookingsOfItem = new ArrayList<>();
                 for (Booking booking : allBookingsOfItem) {
@@ -152,7 +155,8 @@ public class ItemServiceImpl implements ItemService {
     }
 
     public CommentDto addComment(Comment comment) {
-        List<Booking> bookings = bookingRepository.findAllBookingsByBookerId(comment.getAuthor().getId())
+        Pageable page = PageRequest.of(0, 10);
+        List<Booking> bookings = bookingRepository.findAllBookingsByBookerId(comment.getAuthor().getId(), page)
                 .stream()
                 .filter(o1 -> o1.getItem().getId() == comment.getItem().getId())
                 .filter(o1 -> o1.getStatus().equals(BookingStatus.APPROVED))
@@ -169,7 +173,7 @@ public class ItemServiceImpl implements ItemService {
                 comment.getCreated());
     }
 
-    private void checkItemOwner(long userId, Item item) {
+    public void checkItemOwner(long userId, Item item) {
         User owner = userController.getUserById(userId);
         if (owner != null) {
             item.setOwner(owner);
@@ -178,7 +182,7 @@ public class ItemServiceImpl implements ItemService {
         }
     }
 
-    private Item checkAndSetFieldsForUpdate(Item item, long itemId) {
+    public Item checkAndSetFieldsForUpdate(Item item, long itemId) {
         Item updatedItem = ItemMapper.toItem(getItemById(itemId));
         if (item.getName() != null) {
             updatedItem.setName(item.getName());

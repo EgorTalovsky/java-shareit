@@ -5,14 +5,13 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.IncorrectEmailException;
 import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.user.UserRepository;
-import ru.practicum.shareit.user.UserService;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.Collection;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements ru.practicum.shareit.user.UserService {
     private final UserRepository userRepository;
 
     public User createUser(User user) {
