@@ -17,7 +17,7 @@ import ru.practicum.shareit.user.dto.UserDto;
 public class UserController {
     private final UserClient userClient;
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<Object> createUser(@RequestBody UserDto userDto) {
         return userClient.createUser(userDto);
     }
@@ -38,8 +38,8 @@ public class UserController {
         return userClient.updateUser(id, userDto);
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteUserById(@PathVariable long id) {
-        userClient.deleteUserById(id);
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<Object> deleteUserById(@PathVariable long userId) {
+        return userClient.deleteUserById(userId);
     }
 }

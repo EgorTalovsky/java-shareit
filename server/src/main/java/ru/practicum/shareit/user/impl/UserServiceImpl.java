@@ -1,6 +1,7 @@
 package ru.practicum.shareit.user.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.IncorrectEmailException;
 import ru.practicum.shareit.exception.UserNotFoundException;
@@ -11,6 +12,7 @@ import java.util.Collection;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements ru.practicum.shareit.user.UserService {
     private final UserRepository userRepository;
 

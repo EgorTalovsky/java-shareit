@@ -27,8 +27,6 @@ services:
   db:
     image: postgres:13.7-alpine
     container_name: db
-    volumes:
-      - ./database:/docker-entrypoint-initdb.d
     ports:
       - "6541:5432"
     environment:
