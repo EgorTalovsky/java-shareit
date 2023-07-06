@@ -46,8 +46,8 @@ public class ItemRequestClient extends BaseClient {
     }
 
     @GetMapping("/{requestId}")
-    public ResponseEntity<Object> getItemRequestById(@RequestHeader("X-Sharer-User-Id") long userId,
-                                                     @PathVariable long requestId) {
+    public ResponseEntity<Object> getItemRequestById(@PathVariable long requestId,
+                                                     @RequestHeader("X-Sharer-User-Id") long userId) {
         return get("/" + requestId, userId);
     }
 }
