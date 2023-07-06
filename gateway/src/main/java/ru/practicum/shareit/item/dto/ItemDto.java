@@ -4,9 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.catalina.User;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * TODO Sprint add-controllers.
@@ -25,5 +27,8 @@ public class ItemDto {
     private String description;
     @NotNull
     private Boolean available;
+    private User owner;
+    private List<CommentDto> comments;
+    private long requestId;
 }
 

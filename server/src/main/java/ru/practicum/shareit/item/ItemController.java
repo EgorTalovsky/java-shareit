@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.CommentDto;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor
+@Slf4j
 public class ItemController {
     @Autowired
     private final ItemService itemService;
@@ -37,6 +39,7 @@ public class ItemController {
                            @RequestBody @Valid ItemDto itemDto) {
         Item item = new Item();
         long requestId = itemDto.getRequestId();
+        log.debug("REQUEST ID =============== {}", requestId);
         if (requestId > 0) {
             ItemRequest request = itemRequestService.getFullItemRequestById(requestId);
             item = ItemMapper.toItem(itemDto);
