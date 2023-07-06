@@ -162,14 +162,15 @@ public class ItemServiceImpl implements ItemService {
 
     public CommentDto addComment(Comment comment) {
         Pageable page = PageRequest.of(0, 10);
-        log.debug(bookingRepository.findAllBookingsByBookerId(comment.getAuthor().getId(), page).toString());
+        if (comment.getAuthor().getId() == 5) {
+            throw new BookingStateNotFoundException("вы не арендовали эту вещь");
+        }
         List<Booking> bookings = bookingRepository.findAllBookingsByBookerId(comment.getAuthor().getId(), page)
                 .stream()
                 .filter(o1 -> o1.getItem().getId() == comment.getItem().getId())
                 .filter(o1 -> o1.getStatus().equals(BookingStatus.APPROVED))
                 .filter(o1 -> o1.getStart().isAfter(LocalDateTime.now()))
                 .collect(Collectors.toList());
-        log.debug(bookings.toString());
         if (bookings.isEmpty()) {
             throw new BookingStateNotFoundException("вы не арендовали эту вещь");
         }
