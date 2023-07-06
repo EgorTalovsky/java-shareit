@@ -42,7 +42,7 @@ public class BookingController {
 
     @GetMapping
     public ResponseEntity<Object> getAllBookingsForUser(@RequestHeader("X-Sharer-User-Id") long userId,
-                                                        @RequestParam(name = "state", defaultValue = "all") String stateParam,
+                                                        @RequestParam(name = "state", defaultValue = "ALL") String stateParam,
                                                         @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
                                                         @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
         PageValidator.checkPageable(from, size);
@@ -51,7 +51,7 @@ public class BookingController {
 
     @GetMapping("/owner")
     public ResponseEntity<Object> getAllBookingsForOwner(@RequestHeader("X-Sharer-User-Id") long userId,
-                                                         @RequestParam(name = "state", defaultValue = "all") String stateParam,
+                                                         @RequestParam(name = "state", defaultValue = "ALL") String stateParam,
                                                          @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
                                                          @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
         PageValidator.checkPageable(from, size);

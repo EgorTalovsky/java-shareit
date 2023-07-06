@@ -98,7 +98,7 @@ public class ItemController {
                 commentDto.getText(),
                 ItemMapper.toItem(itemService.getItemById(itemId)),
                 userService.getUserById(userId),
-                LocalDateTime.now());
+                LocalDateTime.now().withNano(0).withSecond(0));
         return itemService.addComment(comment);
     }
 }
