@@ -8,6 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookItemRequestDto;
 import ru.practicum.shareit.validate.PageValidator;
+import ru.practicum.shareit.validate.exception.BookingCheckException;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
@@ -23,8 +24,11 @@ public class BookingController {
 
     @PostMapping
     public ResponseEntity<Object> addBooking(@RequestHeader("X-Sharer-User-Id") long userId,
-                                             @RequestBody @Valid BookItemRequestDto requestDto) {
-        return bookingClient.addBooking(userId, requestDto);
+                                             @RequestBody @Valid BookItemRequestDto bookingDto) {
+        if (bookingDto.getEnd().isBefore(bookingDto.getStart()) || bookingDto.getStart().equals(bookingDto.getEnd())) {
+            throw new BookingCheckException("Окончание аренды не может быть одновременно с началом либо раньше его");
+        }
+        return bookingClient.addBooking(userId, bookingDto);
     }
 
     @PatchMapping("/{bookingId}")

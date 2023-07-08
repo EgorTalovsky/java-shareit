@@ -13,11 +13,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BookItemRequestDto {
-    private long itemId;
+    private long id;
     @NotNull
     @FutureOrPresent
     private LocalDateTime start;
     @NotNull
     @Future
     private LocalDateTime end;
+    private long itemId;
 }

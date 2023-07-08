@@ -11,7 +11,6 @@ import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.item.dto.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 
-import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -26,7 +25,7 @@ public class BookingController {
 
     @PostMapping
     public Booking addBooking(@RequestHeader("X-Sharer-User-Id") long bookerId,
-                              @RequestBody @Valid BookingDto bookingDto) {
+                              @RequestBody BookingDto bookingDto) {
         Item item = ItemMapper.toItem(itemService.getItemById(bookingDto.getItemId()));
         Booking booking = BookingMapper.toBooking(bookingDto, item);
         return bookingService.addBooking(bookerId, booking, item);

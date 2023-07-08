@@ -3,7 +3,6 @@ package ru.practicum.shareit.user.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.IncorrectEmailException;
 import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
@@ -17,10 +16,6 @@ public class UserServiceImpl implements ru.practicum.shareit.user.UserService {
     private final UserRepository userRepository;
 
     public User createUser(User user) {
-        String email = user.getEmail();
-        if (email == null || !email.contains("@")) {
-            throw new IncorrectEmailException("Некорректный адрес электронной почты");
-        }
         return userRepository.save(user);
     }
 

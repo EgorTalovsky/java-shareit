@@ -22,7 +22,7 @@ public interface ItemService {
 
     CommentDto addComment(Comment comment);
 
-    void checkItemOwner(long userId, Item item);
+    void setItemOwner(long userId, Item item);
 
-    Item checkAndSetFieldsForUpdate(Item item, long itemId);
+    Item setFieldsForUpdate(Item item, long itemId);
 }

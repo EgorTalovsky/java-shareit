@@ -14,7 +14,6 @@ import ru.practicum.shareit.request.impl.ItemRequestServiceImpl;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.UserService;
 
-import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,7 +35,7 @@ public class ItemController {
 
     @PostMapping
     public ItemDto addItem(@RequestHeader("X-Sharer-User-Id") long userId,
-                           @RequestBody @Valid ItemDto itemDto) {
+                           @RequestBody ItemDto itemDto) {
         Item item = new Item();
         long requestId = itemDto.getRequestId();
         log.debug("REQUEST ID =============== {}", requestId);
@@ -94,7 +93,7 @@ public class ItemController {
 
     @PostMapping("/{itemId}/comment")
     public CommentDto addComment(@RequestHeader("X-Sharer-User-Id") long userId,
-                                 @RequestBody @Valid CommentDto commentDto,
+                                 @RequestBody CommentDto commentDto,
                                  @PathVariable long itemId) {
         Comment comment = new Comment(
                 commentDto.getId(),

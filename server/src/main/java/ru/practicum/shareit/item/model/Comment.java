@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
 
 @Data
@@ -18,7 +17,6 @@ public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @NotEmpty
     private String text;
     @ManyToOne
     @JoinColumn(name = "item_id")

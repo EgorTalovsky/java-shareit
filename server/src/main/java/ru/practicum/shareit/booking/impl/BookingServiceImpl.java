@@ -34,12 +34,6 @@ public class BookingServiceImpl implements BookingService {
         if (userController.getUserById(bookerId) == null) {
             throw new UserNotFoundException("Арендатор не найден");
         }
-        if (booking.getEnd().isBefore(LocalDateTime.now()) || booking.getStart().isBefore(LocalDateTime.now())) {
-            throw new BookingCheckException("Начало и окончание аренды не могут быть в прошлом");
-        }
-        if (booking.getEnd().isBefore(booking.getStart()) || booking.getStart().equals(booking.getEnd())) {
-            throw new BookingCheckException("Окончание аренды не может быть одновременно с началом либо раньше его");
-        }
         booking.setBooker(userController.getUserById(bookerId));
         booking.setStatus(BookingStatus.WAITING);
         return bookingRepository.save(booking);

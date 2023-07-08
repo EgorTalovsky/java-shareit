@@ -26,8 +26,8 @@ public class BookingClient extends BaseClient {
         );
     }
 
-    public ResponseEntity<Object> addBooking(long userId, BookItemRequestDto requestDto) {
-        return post("", userId, requestDto);
+    public ResponseEntity<Object> addBooking(long userId, BookItemRequestDto bookingDto) {
+        return post("", userId, bookingDto);
     }
 
     public ResponseEntity<Object> addResponseToBooking(long userId, long bookingId, Boolean approved) {

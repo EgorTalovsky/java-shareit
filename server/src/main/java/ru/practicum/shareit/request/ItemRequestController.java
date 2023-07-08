@@ -6,7 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 
-import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -20,7 +19,7 @@ public class ItemRequestController {
     private final ItemRequestService itemRequestService;
 
     @PostMapping
-    public ItemRequestDto addRequest(@RequestBody @Valid ItemRequestDto itemRequestDto,
+    public ItemRequestDto addRequest(@RequestBody ItemRequestDto itemRequestDto,
                                      @RequestHeader("X-Sharer-User-Id") long requestorId) {
         return itemRequestService.addRequest(itemRequestDto, requestorId);
     }

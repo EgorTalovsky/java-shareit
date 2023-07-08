@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.user.model.User;
 
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 /**
@@ -18,9 +17,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class BookingDto {
     private long id;
-    @NotNull(message = "Укажите время начала аренды")
     private LocalDateTime start;
-    @NotNull(message = "Укажите время окончания аренды")
     private LocalDateTime end;
     private long itemId;
     private User booker;

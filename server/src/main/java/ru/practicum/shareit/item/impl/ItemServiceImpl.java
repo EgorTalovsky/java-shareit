@@ -41,12 +41,12 @@ public class ItemServiceImpl implements ItemService {
     private final CommentRepository commentRepository;
 
     public Item addItem(long userId, Item item) {
-        checkItemOwner(userId, item);
+        setItemOwner(userId, item);
         return itemRepository.save(item);
     }
 
     public Item updateItem(Item item, long itemId, long userId) {
-        Item updatedItem = checkAndSetFieldsForUpdate(item, itemId);
+        Item updatedItem = setFieldsForUpdate(item, itemId);
         userService.getUserById(userId);
         return itemRepository.save(updatedItem);
     }
@@ -91,7 +91,6 @@ public class ItemServiceImpl implements ItemService {
             for (Item item : items) {
                 long itemId = item.getId();
                 List<Booking> allBookingsOfItem = bookingRepository.findAllBookingsByItemId(itemId, page);
-                log.debug("ALL BOOKING FOR {} ====== {}, SIZE = {}", itemId, allBookingsOfItem.toString(), allBookingsOfItem.size());
                 List<Booking> pastBookingsOfItem = new ArrayList<>();
                 List<Booking> futureBookingsOfItem = new ArrayList<>();
                 for (Booking booking : allBookingsOfItem) {
@@ -105,8 +104,6 @@ public class ItemServiceImpl implements ItemService {
                         futureBookingsOfItem.add(booking);
                     }
                 }
-                log.debug("PAST BOOKING FOR {} ====== {}, SIZE = {}", itemId, pastBookingsOfItem, pastBookingsOfItem.size());
-                log.debug("FUTURE BOOKING FOR {} ====== {}, SIZE = {}", itemId, futureBookingsOfItem, futureBookingsOfItem.size());
                 BookingSimplifiedDto lastBookingDto = null;
                 if (!pastBookingsOfItem.isEmpty()) {
                     Booking lastBooking = pastBookingsOfItem
@@ -182,16 +179,7 @@ public class ItemServiceImpl implements ItemService {
                 comment.getCreated());
     }
 
-    public void checkItemOwner(long userId, Item item) {
-        User owner = userService.getUserById(userId);
-        if (owner != null) {
-            item.setOwner(owner);
-        } else {
-            throw new UserNotFoundException("Владелец не найден");
-        }
-    }
-
-    public Item checkAndSetFieldsForUpdate(Item item, long itemId) {
+    public Item setFieldsForUpdate(Item item, long itemId) {
         Item updatedItem = ItemMapper.toItem(getItemById(itemId));
         if (item.getName() != null) {
             updatedItem.setName(item.getName());
@@ -205,4 +193,12 @@ public class ItemServiceImpl implements ItemService {
         return updatedItem;
     }
 
+    public void setItemOwner(long userId, Item item) {
+        User owner = userService.getUserById(userId);
+        if (owner != null) {
+            item.setOwner(owner);
+        } else {
+            throw new UserNotFoundException("Владелец не найден");
+        }
+    }
 }
